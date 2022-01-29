@@ -1,24 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import { useContext } from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
+
+import Landing from './components/layout/Landing';
+import NavbarMenu from './components/layout/NavbarMenu';
+import ProtectedRoute from './components/routing/ProtectedRoute';
+import AuthContextProvider from './contexts/AuthContext';
+import PostContextProvider from './contexts/PostContext';
+import Auth from './views/Auth';
+import DashBoard from './views/DashBoard';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthContextProvider>
+      <PostContextProvider>
+        <Router>
+          <Routes>
+            <Route path='/abc' element={<Landing />} />
+            <Route path='/login' element={<Auth authRoute='login' />} />
+            <Route path='/register' element={<Auth authRoute='register' />} />
+            {/* <Route path='/dashboard' element={<DashBoard />} /> */}
+            <Route
+              path='/dashboard'
+              element={
+                <ProtectedRoute redirectTo='/login'>
+                  <NavbarMenu />
+                  <DashBoard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* <Route element={<ProtectedRoute />}>
+            <Route path='/dashboard' element={<DashBoard />} />
+          </Route> */}
+
+            {/* <ProtectedRoute name='abc' /> */}
+          </Routes>
+        </Router>
+      </PostContextProvider>
+    </AuthContextProvider>
   );
 }
 
